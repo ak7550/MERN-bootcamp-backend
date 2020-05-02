@@ -58,7 +58,7 @@ exports.signin = (req, res) => {
             // errors is an object gives us an array.
         });
     }
-    User.findOne({ email }, (err, user) => {
+    User.findOne( email , (err, user) => {
         if (err) {
             return res
                 .status(400)
@@ -86,6 +86,7 @@ exports.signin = (req, res) => {
             token,
             user: { _id, name, email, role }
         });
-        console.log(`End of signing in method for the given info of ${req.body} by converting it into ${user} the passed response is not possible to log out.`);
+        console.log(`End of signing in method for the given info of ${req.body} by converting it into ${user} the passed response is not possible to log out.And the passed token is:\n ${token}\nComplete response is: ${res} and response body is: ${res.body}. cookie is: ${res.cookie}`);
+        // cookie is a call back function, understood from console
     });
 }
