@@ -40,18 +40,20 @@ exports.signup = (req, res) => {
 }
 
 exports.signout = (req, res) => {
+    res.clearCookie("token");
     res
-    .clearCookie("token")
-    .json({
-        message: "User signedout!!"
-    });
+        .status(200)
+        .json({
+            message: "User signedout!!"
+        });
     console.log("signed out");
 }
 
 exports.signin = (req, res) => {
     const errors = validationResult(req);
     const { email, password } = req.body;
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty()) // if there's any error in req
+    {
         // i dont want my code to be executed after that.
         return res.status(422).json({
             err: errors.array()[0].msg,
@@ -60,15 +62,15 @@ exports.signin = (req, res) => {
             // errors is an object gives us an array.
         });
     }
-    User.findOne( {email} , (err, user) => {
-        if (err) {
+    User.findOne({ email }, (err, user) => {
+        if (!user || err) { // if the user doesn't exist in our db or any other kind of error while searching into the db (that error may store in err argument)
             return res
-                .status(400)
+                .status(503)
                 .json({
-                    error: "400 BAD REQUEST, Database is unable to find request information."
+                    error: "Requested information not found"
                 })
         }
-        if (!user.authenticate(password)) {
+        if (!user.authenticate(password)) { // if the password doesnot match
             return res
                 .status(401)
                 .json({
@@ -78,17 +80,25 @@ exports.signin = (req, res) => {
         //signin the user, give the user required token
         const token = jwt.sign({ _id: user._id }, process.env.SECRET);
         // put token in cookie, use date accordingly
-        res.cookie("token", token, { expire: Date.now()+9999});
+        res.cookie("token", token, { expire: Date.now() + 9999 });
         //"token" is the name of the cookie
         //send respond to front end
         const { _id, name, email, role } = user;
         res
-        .status(200)
-        .json({
-            token,
-            user: { _id, name, email, role }
-        });
+            .status(200)
+            .json({
+                token,
+                user: { _id, name, email, role }
+            });
         console.log(`End of signing in method for the given info of ${req.body} by converting it into ${user} the passed response is not possible to log out.And the passed token is:\n ${token}\nComplete response is: ${res} and response body is: ${res.body}. cookie is: ${res.cookie}`);
         // cookie is a call back function, understood from console
     });
 }
+
+//protected routes
+exports.isSignedIn= expressJwt({
+    secret:process.env.SECRET,
+    // works on the request handler
+    userProperty: "auth" //user's personal authentication
+});
+// custom middlewares
