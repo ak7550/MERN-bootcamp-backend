@@ -1,8 +1,8 @@
 require('dotenv').config();
 const User = require("../models/user");
 const { validationResult } = require('express-validator');
-const jwt=require('jsonwebtoken');
-const expressJwt=require("express-jwt");
+const jwt = require('jsonwebtoken');
+const expressJwt = require("express-jwt");
 // signup method will save the user information into our database
 exports.signup = (req, res) => {
     console.log("Request body: ", req.body);
@@ -60,24 +60,29 @@ exports.signin = (req, res) => {
     }
     User.findOne({ email }, (err, user) => {
         if (err) {
-            return res.status(400).json({
-                error: "400 BAD REQUEST, Database is unable to find request information."
-            })
+            return res
+                .status(400)
+                .json({
+                    error: "400 BAD REQUEST, Database is unable to find request information."
+                })
         }
         if (!user.authenticate(password)) {
-            return res.status(401).json({
-                error: "email and password donot match"
-            })
+            return res
+                .status(401)
+                .json({
+                    error: "email and password donot match"
+                })
         }
         //signin the user, give the user required token
         const token = jwt.sign({ _id: user._id }, process.env.SECRET);
         // put token in cookie, use date accordingly
-        res.cookie("token",token,{expire: new Date()+9999});
-        
+        res.cookie("token", token, { expire: new Date() + 9999 });
+
         //send respond to front end
-        const {_id,name,email,role}=user;
+        const { _id, name, email, role } = user;
         return res.json({
-            token,user:{_id,name,email,role}
+            token,
+            user: { _id, name, email, role }
         });
     });
 }
