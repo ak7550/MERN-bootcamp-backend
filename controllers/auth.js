@@ -40,8 +40,10 @@ exports.signup = (req, res) => {
 }
 
 exports.signout = (req, res) => {
-    res.json({
-        message: "user signout!!"
+    res
+    .clearCookie("token")
+    .json({
+        message: "User signedout!!"
     });
     console.log("signed out");
 }
