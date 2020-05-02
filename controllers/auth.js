@@ -100,5 +100,7 @@ exports.isSignedIn= expressJwt({
     secret:process.env.SECRET,
     // works on the request handler
     userProperty: "auth" //user's personal authentication
+
+    //expressJwt already having a next(); covered up for us, so we dont need to write next() once again into our custom middlewares.
 });
 // custom middlewares
