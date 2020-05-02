@@ -47,8 +47,8 @@ exports.signout = (req, res) => {
 }
 
 exports.signin = (req, res) => {
-    const { email, password } = req.body;
     const errors = validationResult(req);
+    const { email, password } = req.body;
     if (!errors.isEmpty()) {
         // i dont want my code to be executed after that.
         return res.status(422).json({
@@ -77,12 +77,15 @@ exports.signin = (req, res) => {
         const token = jwt.sign({ _id: user._id }, process.env.SECRET);
         // put token in cookie, use date accordingly
         res.cookie("token", token, { expire: new Date() + 9999 });
-
+        //"token" is the name of the cookie
         //send respond to front end
         const { _id, name, email, role } = user;
-        return res.json({
+        res
+        .status(200)
+        .json({
             token,
             user: { _id, name, email, role }
         });
+        console.log(`End of signing in method for the given info of ${req.body} by converting it into ${user} the passed response is not possible to log out.`);
     });
 }
