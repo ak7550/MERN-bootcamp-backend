@@ -60,7 +60,7 @@ exports.signin = (req, res) => {
             // errors is an object gives us an array.
         });
     }
-    User.findOne( email , (err, user) => {
+    User.findOne( {email} , (err, user) => {
         if (err) {
             return res
                 .status(400)
@@ -78,7 +78,7 @@ exports.signin = (req, res) => {
         //signin the user, give the user required token
         const token = jwt.sign({ _id: user._id }, process.env.SECRET);
         // put token in cookie, use date accordingly
-        res.cookie("token", token, { expire: new Date() + 9999 });
+        res.cookie("token", token, { expire: Date.now()+9999});
         //"token" is the name of the cookie
         //send respond to front end
         const { _id, name, email, role } = user;
