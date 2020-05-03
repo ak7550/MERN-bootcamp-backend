@@ -40,8 +40,8 @@ exports.signup = (req, res) => {
 }
 
 exports.signout = (req, res) => {
-    res.clearCookie("token");
     res
+        .clearCookie("token")
         .status(200)
         .json({
             message: "User signedout!!"
@@ -95,12 +95,37 @@ exports.signin = (req, res) => {
     });
 }
 
-//protected routes
-exports.isSignedIn= expressJwt({
-    secret:process.env.SECRET,
+//protected routes, we will use if the user is signedin or authenticated
+exports.isSignedIn = expressJwt({
+    secret: process.env.SECRET,
     // works on the request handler
     userProperty: "auth" //user's personal authentication
-
     //expressJwt already having a next(); covered up for us, so we dont need to write next() once again into our custom middlewares.
 });
+
 // custom middlewares
+exports.isAuthenticated = (req, res, next) => {
+    // in front end we have set a property known as profile, is been set if the user is loged in. How does it's happening, we'll think of it in front end part
+    // profile clarifies the user is signedin, req.auth clarifies the user is authenticated
+    let checker = req.profile && req.auth && req.profile._id === req.auth._id;
+    if (!checker) {
+        return res
+            .status(403)
+            .json({
+                error: "Access Denied!"
+            })
+    }
+    next();
+};
+exports.isAdmin = (req, res, next) => {
+    // if the user profile role is 0, that means he is a regular user, if it's 1 then he's an admin
+    id(req.profile.role === 0)
+    {
+        return res
+            .status(403)
+            .json({
+                error: "You are not an admin\n Access Denied!!"
+            })
+    }
+    next();
+};
