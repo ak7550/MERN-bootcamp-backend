@@ -49,7 +49,7 @@ userSchema.virtual("password")
                 return this._password;
              })
             .set(function (password) { 
-                // this._password=password;
+                this._password=password; // keep it for now, i want to see the plain password for working purpose
                 this.salt=uuidv1();
                 this.encryptedPassword=this.securePassword(password);
              });
