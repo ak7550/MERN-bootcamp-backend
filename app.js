@@ -15,8 +15,9 @@ app.use(cors());
 
 //my routes
 const authRoutes=require("./routes/auth");
+const userRoutes=require("./routes/user");
 app.use("/api",authRoutes);
-
+app.use("/api",userRoutes);
 
 //db connection 
 // .env is a load utility npm module that loads environment variables

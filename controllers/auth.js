@@ -37,7 +37,7 @@ exports.signup = (req, res) => {
             }); // only one thing as a response can be passed to the client, so else part is necessary as if gets executed it's gonna show an error while executing or sending another response to the client
     });
     console.log(`End of signing up method for the given info of ${req.body} by converting it into ${user}`);
-}
+};
 
 exports.signout = (req, res) => {
     res
@@ -47,7 +47,7 @@ exports.signout = (req, res) => {
             message: "User signedout!!"
         });
     console.log("signed out");
-}
+};
 
 exports.signin = (req, res) => {
     const errors = validationResult(req);
@@ -68,14 +68,14 @@ exports.signin = (req, res) => {
                 .status(503)
                 .json({
                     error: "Requested information not found"
-                })
+                });
         }
         if (!user.authenticate(password)) { // if the password doesnot match
             return res
                 .status(401)
                 .json({
                     error: "email and password donot match"
-                })
+                });
         }
         //signin the user, give the user required token
         const token = jwt.sign({ _id: user._id }, process.env.SECRET);
@@ -84,8 +84,7 @@ exports.signin = (req, res) => {
         //"token" is the name of the cookie
         //send respond to front end
         const { _id, name, email, role } = user;
-        res
-            .status(200)
+        res.status(200)
             .json({
                 token,
                 user: { _id, name, email, role }
@@ -93,7 +92,7 @@ exports.signin = (req, res) => {
         console.log(`End of signing in method for the given info of ${req.body} by converting it into ${user} the passed response is not possible to log out.And the passed token is:\n ${token}\nComplete response is: ${res} and response body is: ${res.body}. cookie is: ${res.cookie}`);
         // cookie is a call back function, understood from console
     });
-}
+};
 
 //protected routes, we will use if the user is signedin or authenticated
 exports.isSignedIn = expressJwt({
@@ -107,14 +106,16 @@ exports.isSignedIn = expressJwt({
 exports.isAuthenticated = (req, res, next) => {
     // in front end we have set a property known as profile, is been set if the user is loged in. How does it's happening, we'll think of it in front end part
     // profile clarifies the user is signedin, req.auth clarifies the user is authenticated
-    let checker = req.profile && req.auth && req.profile._id === req.auth._id;
+    let checker = req.profile && req.auth && req.profile._id == req.auth._id;
     if (!checker) {
         return res
             .status(403)
             .json({
-                error: "Access Denied!"
+                error: "Access Denied!",
+                message: `${req.profile.name} is not Authenticated`
             })
     }
+    console.log(`${req.profile.name} is Authenticated`);
     next();
 };
 exports.isAdmin = (req, res, next) => {
@@ -124,8 +125,10 @@ exports.isAdmin = (req, res, next) => {
         return res
             .status(403)
             .json({
-                error: "You are not an admin\n Access Denied!!"
+                error: "You are not an admin\n Access Denied!!",
+                message: `${req.profile.name} is not an Admin`
             })
     }
+    console.log(`${req.profile.name} is an Admin`);
     next();
 };
