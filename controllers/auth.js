@@ -31,7 +31,7 @@ exports.signup = (req, res) => {
                 lastName: user.lastName,
                 completeName: user.name,
                 email: user.email,
-                // password: user.password,
+                // password: user.password, //perfect json response, giving plainpassword as output
                 // ecryptedPassword: user.encryptedPassword,
                 // salt: user.salt
             }); // only one thing as a response can be passed to the client, so else part is necessary as if gets executed it's gonna show an error while executing or sending another response to the client

@@ -30,3 +30,30 @@ exports.getUser=(req,res)=>{
                 Email: req.profile.email
             });
 };
+
+exports.getAllUserInfo=(req,res)=>{
+    User.find({},function(err, users) {
+        if (!users || err) { // if the user doesn't exist in our db or any other kind of error while searching into the db (that error may store in err argument)
+            return res
+                .status(503)
+                .json({
+                    error: "Requested information not found"
+                });
+        }
+        // there's no error, and the arr is not empty
+        let userJson={
+            users:[]
+        };
+        console.log(`All user total information: ${users}`); // serves the purpose res.json(users);
+        res.status(200).json(users);
+        users.forEach(user => {
+            console.log(`User No: ${users.indexOf(user)}`);
+            console.log(`================================`);
+            console.log(`${user}`);
+            //not showing me the plainpassword, though it's visible at at singnup route
+            console.log(`\n${user.password}`);
+            userJson.users.push(user);
+        });
+        res.status(200).json(userJson);
+    });
+};

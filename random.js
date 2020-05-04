@@ -1,4 +1,4 @@
-import { format } from "morgan";
+// import { format } from "morgan";
 
 const smallletters = "qwertyuiopasdfghjklzxcvbnm", specialSymbols = "~!@#$%^&*()_+`={}[]<>,.?/|";
 const numbers = "1234567890", capitalLetters = "QWERTYUIOPASDFGHJKLZXCVBNM";
@@ -11,9 +11,17 @@ const getString = (length, characters) => {
      return result;
 }
 
-console.log(getString(20,(smallletters+capitalLetters+numbers)));
-console.log(getString(20,(smallletters+capitalLetters+numbers)).length);
-
-
-// make something that gonna username,password,email by itself in a json format.
-// everything will be connected with eachother.
+const createJson=()=>{
+    const firstName=getString(8,(smallletters));
+    const lastName=getString(8,(smallletters+capitalLetters+numbers));
+    const email=firstName+"."+lastName+"@gmail.com";
+    const name=firstName+" "+lastName;
+    const password=firstName+lastName+"#";
+    console.log(`{
+        \"name\": \"${name}\",
+        \"email\": \"${email}\",
+        \"password\":\"${password}\"
+    }`);
+    // console.log(`{ `);
+};
+console.log(createJson());
