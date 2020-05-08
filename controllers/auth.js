@@ -3,6 +3,7 @@ const User = require("../models/user");
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const expressJwt = require("express-jwt");
+
 // signup method will save the user information into our database
 exports.signup = (req, res) => {
     console.log("Request body: ", req.body);
@@ -118,16 +119,18 @@ exports.isAuthenticated = (req, res, next) => {
     console.log(`${req.profile.name} is Authenticated`);
     next();
 };
+
 exports.isAdmin = (req, res, next) => {
     // if the user profile role is 0, that means he is a regular user, if it's 1 then he's an admin
-    id(req.profile.role === 0)
+    if (req.profile.role !== 1) // anything other than 1 is not an admin
     {
+        console.log(`${req.profile.name} is not an Admin`);
         return res
             .status(403)
             .json({
-                error: "You are not an admin\n Access Denied!!",
+                error: "Access Denied!!",
                 message: `${req.profile.name} is not an Admin`
-            })
+            });
     }
     console.log(`${req.profile.name} is an Admin`);
     next();
